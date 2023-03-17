@@ -16,7 +16,7 @@ class KtunAiLabBot(commands.Bot):
     bot_app_info: discord.AppInfo
     bot_prefix = '!'
     bot_version = '0.1'
-    initial_extensions = ['cogs.admin', 'cogs.user', 'cogs.fun', 'cogs.voice']
+    initial_extensions = ['cogs.admin', 'cogs.events']
 
     # Gateway intents
     intents = discord.Intents.all()
