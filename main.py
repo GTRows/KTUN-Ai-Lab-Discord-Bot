@@ -15,7 +15,7 @@ from discord import app_commands
 class KtunAiLabBot(commands.Bot):
     bot_app_info: discord.AppInfo
     bot_prefix = '!'
-    bot_version = '0.1'
+    bot_version = '0.5'
 
     # Gateway intents
     intents = discord.Intents.all()

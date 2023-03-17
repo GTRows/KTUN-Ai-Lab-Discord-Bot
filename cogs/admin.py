@@ -10,23 +10,25 @@ class AdminCog(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def send_embed(self, ctx, channel):
+    async def send_embed(self, ctx, channel = "<#1074063844411981955>"):
         """
         admin commands
         """
         ch = functions.get_channel_by_id(self.client, channel)
-        embed = discord.Embed(title="Başvuru Formu", url="https://forms.gle/ZQQA128LuP9tm4hY9")
-        embed.set_author(name="KTUN AI Lab", url="https://gtrows.com",
-                         icon_url="https://cdn.discordapp.com/avatars/875055421675667496/c02bbd09488e9c8ffbbcb1b1e588b62d.webp?size=80")
-        # embed.set_thumbnail(
-        #     url="https://www.teknofest.org/upload/31b959abfaec671eaef701d914965f01.png")
-        # https://cdn.discordapp.com/avatars/336548700803301380/f6109faa5d139b07b81a5bce850fea7e.webp?size=128
-        embed.add_field(name="E-Ticaret Yapay Zeka Takımı",
-                        value="Başvurularınızı bekliyoruz.",
-                        inline=False)
-        embed.set_footer(text="Takım kaptanı: Mehmet Demircan")
-        # embed.set_image(
-        #    url="https://instagram.fist13-1.fna.fbcdn.net/v/t51.2885-15/sh0.08/e35/s640x640/246535393_287308349908957_8488703921768336750_n.webp.jpg?_nc_ht=instagram.fist13-1.fna.fbcdn.net&_nc_cat=101&_nc_ohc=ZHx_MrEJDJEAX_IJ75V&tn=vFjocogaCOzh3Azd&edm=AP_V10EBAAAA&ccb=7-4&oh=746b2c703a29c1a65ae26f00d0f46789&oe=61763677&_nc_sid=4f375e")
+        embed = discord.Embed(title="Mezun Söyleyişi - Zeki Dişçi - Java ve Java Teknolojileri")
+        embed.set_author(name="KTUN AI Lab",
+                         icon_url="https://media.discordapp.net/attachments/1086371529564094554/1086372841273950268/Varlk_898x.png?width=676&height=676")
+        embed.set_image(url="https://media.discordapp.net/attachments/1086371529564094554/1086371592981987439/Soyleyisi1.jpg?width=676&height=676")
+        embed.add_field(name="",
+                        value="""
+                        Okulumuzun değerli bilgisayar mühendisliği mezunları ile sizleri buluşturmak adına planladığımız serinin ilk webinarı 22 Mart saat 20.00'de discord sunucumuzda sizleri bekliyor! ⏰⏰
+
+2019 yılında KTÜN Bilgisayar Mühendisliği bölümünden mezun olmuş olan ve şu anda Bilgi Teknolojileri ve İletişim Kurumu'nda Java Software Developer olarak çalışan Zeki Dişçi ile sizleri buluşturacağız. 
+Etkinlikte öğrencilik yılları ve deneyimleriyle birlikte yazılım dünyasında önemli bir yeri olan Java programla dili, Java kullanarak yazılım sistemlerinin geliştirilmesi ve üretim süreçleri ile ilgili bilgiler alabileceğiniz gibi aklınıza takılan soruları da sorabileceksiniz.
+Etkinlik Discord üzerinden gerçekleştirilecektir.""",
+                        inline=True)
+        embed.set_footer(text="KTUN Bilişim Topluluğu")
+        embed.set_image(url="https://media.discordapp.net/attachments/1086371529564094554/1086371592981987439/Soyleyisi1.jpg")
         await ch.send(embed=embed)
 
     @commands.command()
