@@ -14,13 +14,7 @@ class AdminCog(commands.Cog):
         """
         admin commands
         """
-        if channel[0] == '<' and channel[-1] == '>':
-            channel = channel[2:-1]
-        try:
-            channel = int(channel)
-        except ValueError:
-            await ctx.send("ValueError <@317674611628179456>")
-        ch = self.client.get_channel(channel)
+        ch = functions.get_channel_by_id(self.client, channel)
         embed = discord.Embed(title="Başvuru Formu", url="https://forms.gle/ZQQA128LuP9tm4hY9")
         embed.set_author(name="KTUN AI Lab", url="https://gtrows.com",
                          icon_url="https://cdn.discordapp.com/avatars/875055421675667496/c02bbd09488e9c8ffbbcb1b1e588b62d.webp?size=80")
