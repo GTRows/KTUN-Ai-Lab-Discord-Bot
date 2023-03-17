@@ -9,7 +9,6 @@ from discord.ext import commands
 from itertools import cycle
 from discord.ext.commands import ExtensionFailed, ExtensionNotFound, NoEntryPointError
 from dotenv import load_dotenv
-from dotenv import find_dotenv
 from discord import app_commands
 
 
@@ -17,7 +16,6 @@ class KtunAiLabBot(commands.Bot):
     bot_app_info: discord.AppInfo
     bot_prefix = '!'
     bot_version = '0.1'
-    initial_extensions = ['cogs.admin', 'cogs.events']
 
     # Gateway intents
     intents = discord.Intents.all()
@@ -26,19 +24,9 @@ class KtunAiLabBot(commands.Bot):
     intents.message_content = True
 
     def __init__(self):
-        load_dotenv(dotenv_path=find_dotenv(), verbose=True)
         super().__init__(command_prefix=self.bot_prefix, intents=self.intents)
         self.session: aiohttp.ClientSession = None
-        self.owner_id = int(os.getenv('OWNER_ID'))
-
-    async def load_extensions(self) -> None:
-        print('Loading extensions...')
-        for filename in os.listdir('./cogs'):
-            if filename.endswith('.py'):
-                try:
-                    self.load_extension(f'commands.{filename[: -3]}')
-                except (ExtensionFailed, ExtensionNotFound, NoEntryPointError):
-                    traceback.print_exc()
+        load_dotenv(dotenv_path="config/.env", verbose=True)
 
     async def start(self, debug: bool = False, reconnect: bool = True) -> None:
         self.debug = debug
@@ -46,7 +34,7 @@ class KtunAiLabBot(commands.Bot):
         print(f"Bot prefix: {self.bot_prefix}")
         if self.debug:
             print("Debug mode enabled")
-            await super().start("debug_token", reconnect=reconnect)
+            await super().start(os.getenv('TOKEN'), reconnect=reconnect)
         else:
             await super().start(os.getenv('TOKEN'), reconnect=reconnect)
         # bot start call setup_hook
@@ -64,8 +52,9 @@ class KtunAiLabBot(commands.Bot):
     async def load_cogs(self) -> None:
         for filename in os.listdir('./cogs'):
             if filename.endswith('.py'):
+                print(f'Loading extension {filename}...')
                 try:
-                    await self.load_extension(f'commands.{filename[: -3]}')
+                    await self.load_extension(f'cogs.{filename[: -3]}')
                 except (ExtensionFailed, ExtensionNotFound, NoEntryPointError):
                     traceback.print_exc()
 
@@ -79,13 +68,18 @@ class KtunAiLabBot(commands.Bot):
         print(f"Version: {self.bot_version}")
 
         # bot presence
-        cycle_status = cycle(['^_~', "error!", '(╯°□°）╯︵ ┻━┻', "fixed", '┳━┳ ノ( ゜-゜ノ)'])
-        activity_type = cycle(
-            [discord.ActivityType.listening, discord.ActivityType.streaming, discord.ActivityType.playing
-                , discord.ActivityType.watching, discord.ActivityType.competing, discord.ActivityType.streaming])
+        cycle_status = ('^_~', "error!", '(╯°□°）╯︵ ┻━┻', "fixed", '┳━┳ ノ( ゜-゜ノ)')
+        activity_type = (
+            discord.ActivityType.listening, discord.ActivityType.streaming, discord.ActivityType.playing
+                , discord.ActivityType.competing, discord.ActivityType.streaming)
+        counter = 0
         while True:
-            await asyncio.sleep(10)
-            await self.change_presence(activity=discord.Activity(type=next(activity_type), name=next(cycle_status)))
+            await asyncio.sleep(3)
+            await self.change_presence(activity=discord.Activity(type=activity_type[counter], name=cycle_status[counter]))
+            if counter == 4:
+                counter = 0
+            else:
+                counter += 1
 
     async def on_message(self, message: discord.Message) -> None:
         if message.author.bot:
