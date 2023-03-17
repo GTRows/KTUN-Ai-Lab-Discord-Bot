@@ -1,4 +1,3 @@
 # Environments
 .idea/
-/voice.db
-/config/ .env
+/config
