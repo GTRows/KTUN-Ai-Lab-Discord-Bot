@@ -7,8 +7,12 @@ import traceback
 import sqlite3
 import validators
 
+import functions
+
 
 class voice(commands.Cog):
+    database_path = "D:/Workspace/Code/Ai_Lab/KTUN-Ai-Lab-Discord-Bot/voice.db"
+
     def __init__(self, bot):
         self.bot = bot
 
@@ -17,9 +21,13 @@ class voice(commands.Cog):
         print("Voice State Update")
         print("Member", member)
 
-        # print("connecting to DB")
-        conn = sqlite3.connect('D:\\Workspace\\Code\\Ai_Lab\\KTUN-Ai-Lab-Discord-Bot\\voice.db')
-        # print("Connected to DB")
+        try:
+            print("connecting to DB")
+            conn = sqlite3.connect(self.database_path)
+            print("Connected to DB")
+        except:
+            print("Error connecting to DB")
+
         c = conn.cursor()
         guildID = member.guild.id
         # print("Guild ID", guildID)
@@ -89,20 +97,31 @@ class voice(commands.Cog):
         conn.close()
 
     @commands.command()
-    async def voice_help(self, ctx):
+    @commands.check(functions.is_it_me)
+    async def voice_help(self, ctx, channel=None):
         embed = discord.Embed(title="Komutlar", description="", color=0x7289da)
         embed.set_author(name=f"{ctx.guild.me.display_name}", url="",
                          icon_url=f"{ctx.guild.me.display_avatar.url}")
         embed.add_field(name=f'**Voice Commands**',
-                        value=f'**Kanalı kilitler. İzin vermediğiniz kişiler kanalınıza giremez:**\n\n`!voice lock`\n\n------------\n\n'
-                              f'**Kanalın kilidini açar:**\n\n`!voice unlock`\n\n------------\n\n'
-                              f'**Odanın adını değiştirmenizi sağlar.:**\n\n`!voice name <name>`\n\n------------\n\n'
-                              f'**Sayı girmeniz durumunda oda için kişi sayısı belirler.:**\n\n`!voice limit number`\n\n------------\n\n'
-                              f'**Odanızı kilitlediğinizde odanıza birinin girebilmesi için yetki verir.:**\n\n`!voice permit @person`\n\n------------\n\n'
-                              f'**Odaya girmesini istemediğiniz kişiler için komuttur.:**\n\n`!voice reject @person`\n\n------------\n\n'
-                              f'**Odanın asıl sahibi çıkarsa, odanın yetkilerini devralmanızı sağlayan komut.:**\n\n`!voice claim`',
+                        value=f'**Odayı kilitler. İzin vermediğiniz kişiler kanalınıza giremez:**\n\n`!voice lock`\n\n------------\n\n'
+                              f'**Odanın kilidini açar:**\n\n`!voice unlock`\n\n------------\n\n'
+                              f'**Odanın adını değiştirmenizi sağlar:**\n\n`!voice name <name>`\n\n------------\n\n'
+                              f'**Odanın kişi limitini belirler:**\n\n`!voice limit <number>`\n\n------------\n\n'
+                              f'**Odanızı kilitlediğinizde odanıza birinin girebilmesi için yetki verir:**\n\n`!voice permit @person`\n\n------------\n\n'
+                              f'**Odaya girmesini istemediğiniz kişiler için komuttur:**\n\n`!voice reject @person`\n\n------------\n\n'
+                              f'**Odanın asıl sahibi çıkarsa, odanın yetkilerini devralmanızı sağlayan komut:**\n\n`!voice claim`',
                         inline='false')
-        await ctx.channel.send(embed=embed)
+        if channel is not None:
+            if channel[0] == '<' and channel[-1] == '>':
+                channel = channel[2:-1]
+            try:
+                channel = int(channel)
+            except ValueError:
+                await ctx.send("ValueError <@317674611628179456>")
+            ch = self.bot.get_channel(channel)
+            await ch.send(embed=embed)
+        else:
+            await ctx.channel.send(embed=embed)
 
     @commands.group()
     async def voice(self, ctx):
@@ -110,7 +129,7 @@ class voice(commands.Cog):
 
     @voice.command()
     async def setup(self, ctx):
-        conn = sqlite3.connect('voice.db')
+        conn = sqlite3.connect(self.database_path)
         c = conn.cursor()
         guildID = ctx.guild.id
         id = ctx.author.id
@@ -163,7 +182,7 @@ class voice(commands.Cog):
 
     @commands.command()
     async def setlimit(self, ctx, num):
-        conn = sqlite3.connect('voice.db')
+        conn = sqlite3.connect(self.database_path)
         c = conn.cursor()
         if ctx.author.id == ctx.guild.owner.id or ctx.author.id == 151028268856770560:
             c.execute("SELECT * FROM guildSettings WHERE guildID = ?", (ctx.guild.id,))
@@ -185,7 +204,7 @@ class voice(commands.Cog):
 
     @voice.command()
     async def lock(self, ctx):
-        conn = sqlite3.connect('voice.db')
+        conn = sqlite3.connect(self.database_path)
         c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
@@ -203,7 +222,7 @@ class voice(commands.Cog):
 
     @voice.command()
     async def unlock(self, ctx):
-        conn = sqlite3.connect('voice.db')
+        conn = sqlite3.connect(self.database_path)
         c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
@@ -221,7 +240,7 @@ class voice(commands.Cog):
 
     @voice.command(aliases=["allow"])
     async def permit(self, ctx, member: discord.Member):
-        conn = sqlite3.connect('voice.db')
+        conn = sqlite3.connect(self.database_path)
         c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
@@ -239,7 +258,7 @@ class voice(commands.Cog):
 
     @voice.command(aliases=["deny"])
     async def reject(self, ctx, member: discord.Member):
-        conn = sqlite3.connect('voice.db')
+        conn = sqlite3.connect(self.database_path)
         c = conn.cursor()
         id = ctx.author.id
         guildID = ctx.guild.id
@@ -264,7 +283,7 @@ class voice(commands.Cog):
 
     @voice.command()
     async def limit(self, ctx, limit):
-        conn = sqlite3.connect('voice.db')
+        conn = sqlite3.connect(self.database_path)
         c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
@@ -287,7 +306,7 @@ class voice(commands.Cog):
 
     @voice.command()
     async def name(self, ctx, *, name):
-        conn = sqlite3.connect('voice.db')
+        conn = sqlite3.connect(self.database_path)
         c = conn.cursor()
         id = ctx.author.id
         c.execute("SELECT voiceID FROM voiceChannel WHERE userID = ?", (id,))
@@ -311,7 +330,7 @@ class voice(commands.Cog):
     @voice.command()
     async def claim(self, ctx):
         x = False
-        conn = sqlite3.connect('voice.db')
+        conn = sqlite3.connect(self.database_path)
         c = conn.cursor()
         channel = ctx.author.voice.channel
         if channel == None:
