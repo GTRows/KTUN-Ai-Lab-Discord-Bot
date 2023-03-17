@@ -1,3 +1,5 @@
 # Environments
 .idea/
-/config
+config/
+assets/
+logs/
