@@ -23,10 +23,14 @@ class KtunAiLabBot(commands.Bot):
     intents.presences = True
     intents.message_content = True
 
+
+
     def __init__(self):
         super().__init__(command_prefix=self.bot_prefix, intents=self.intents)
         self.session: aiohttp.ClientSession = None
         load_dotenv(dotenv_path="config/.env", verbose=True)
+
+
 
     async def start(self, debug: bool = False, reconnect: bool = True) -> None:
         self.debug = debug
@@ -38,6 +42,8 @@ class KtunAiLabBot(commands.Bot):
         else:
             await super().start(os.getenv('TOKEN'), reconnect=reconnect)
         # bot start call setup_hook
+        await self.tree.copy_global_to()
+        await self.tree.sync()
 
     async def setup_hook(self) -> None:
         if self.session is None:

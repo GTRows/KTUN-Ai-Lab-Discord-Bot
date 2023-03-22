@@ -1,12 +1,27 @@
 import discord
 from discord.ext import commands
-
+from discord import app_commands
 import functions
 
 
 class AdminCog(commands.Cog):
     def __init__(self, client):
         self.client = client
+    @app_commands.command()
+    @app_commands.choices(choices=[
+            app_commands.Choice(name="Rock", value="rock"),
+            app_commands.Choice(name="Paper", value="paper"),
+            app_commands.Choice(name="Scissors", value="scissors"),
+        ])
+    async def test(self, i: discord.Interaction, choices: app_commands.Choice[str]):
+        """
+        Test bot's latency
+        :param ctx:
+        :return:
+        """
+        print("test function called")
+        print(i)
+        await i.response.send_message(f'Pong! ', choices)
 
     @commands.command()
     @commands.has_permissions(administrator=True)
@@ -30,11 +45,6 @@ Etkinlik Discord üzerinden gerçekleştirilecektir.""",
         embed.set_footer(text="KTUN Bilişim Topluluğu")
         embed.set_image(url="https://media.discordapp.net/attachments/1086371529564094554/1086371592981987439/Soyleyisi1.jpg")
         await ch.send(embed=embed)
-
-    @commands.command()
-    @commands.has_permissions(administrator=True)
-    async def test(self, ctx, *, content):
-        print(content)
 
     @commands.command()
     @commands.check(functions.is_it_me)

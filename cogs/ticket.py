@@ -15,9 +15,17 @@ class Ticket(commands.Cog):
     async def createticket(self, ctx, *args):
         format_args = list(args)
 
-        guild_id = ctx.message.guild.id
-        channel_id = int(format_args[0].strip('<').strip('>').replace('#', ''))
-        title = ' '.join(format_args[1:])
+        try:
+            guild_id = ctx.message.guild.id
+            channel_id = int(format_args[0].strip('<').strip('>').replace('#', ''))
+            title = ' '.join(format_args[1:])
+        except ValueError:
+            await ctx.send('ValueError')
+            return
+        except IndexError:
+            await ctx.send('IndexError')
+            return
+
 
         with open('.\\databases\\ticket.json', 'r+') as file:
             ticket_data = json.load(file)
@@ -92,4 +100,5 @@ class Ticket(commands.Cog):
 
 
 async def setup(client):
-    await client.add_cog(Ticket(client))
+    pass
+    # await client.add_cog(Ticket(client))
