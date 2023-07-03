@@ -11,9 +11,9 @@ import functions
 
 
 class voice(commands.Cog):
-    database_path = "D:/Workspace/Code/Ai_Lab/KTUN-Ai-Lab-Discord-Bot/voice.db"
 
     def __init__(self, bot):
+        self.database_path = bot.config_manager.database_config.path
         self.bot = bot
 
     @commands.Cog.listener()
@@ -30,16 +30,23 @@ class voice(commands.Cog):
 
         c = conn.cursor()
         guildID = member.guild.id
-        # print("Guild ID", guildID)
-        c.execute("SELECT voiceChannelID FROM guild WHERE guildID = ?", (guildID,))
+        print("Guild ID", guildID)
+        try:
+            print(f"SELECT voiceChannelID FROM guild WHERE guildID = {guildID}")
+            c.execute("SELECT voiceChannelID FROM guild WHERE guildID = ?", (guildID,))
+        except Exception as e:
+            print("Error getting error: " + str(e))
+            c.execute("SELECT voiceChannelID FROM guild")
+            print(c.fetchone())
         voice = c.fetchone()
-        # print("Voice Channel ID", voice)
+        print("Voice Channel ID", voice)
         if voice is None:
+            print("Voice Channel ID is None")
             pass
         else:
             voiceID = voice[0]
             try:
-                # print("try")
+                print("try")
                 if after.channel.id == voiceID:
                     c.execute("SELECT * FROM voiceChannel WHERE userID = ?", (member.id,))
                     cooldown = c.fetchone()
@@ -89,9 +96,9 @@ class voice(commands.Cog):
                     await asyncio.sleep(3)
                     c.execute('DELETE FROM voiceChannel WHERE userID=?', (id,))
             except:
-                # print("Error")
-                # print("after.channel")
-                # print(sys.exc_info())
+                print("Error")
+                print("after.channel")
+                print(sys.exc_info())
                 pass
         conn.commit()
         conn.close()

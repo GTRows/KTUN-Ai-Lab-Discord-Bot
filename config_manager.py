@@ -40,6 +40,7 @@ class DatabaseConfig:
         self.user = config['user']
         self.password = config['password']
         self.database = config['database']
+        self.path = config['path']
 
 
 class IntentsConfig:
