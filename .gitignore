@@ -82,6 +82,7 @@ config/.env
 # Environments
 .env
 .venv
+config.json
 env/
 venv/
 ENV/
