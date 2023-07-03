@@ -79,6 +79,8 @@ celerybeat.pid
 .env
 .venv
 .json
+config.json
+env/
 venv/
 ENV/
 env.bak/
