@@ -7,7 +7,7 @@ class ConfigManager:
         self._load_config()
 
     def _load_config(self):
-        with open(self.filename, 'r') as f:
+        with open(self.filename, 'r', encoding='utf-8') as f:
             config = json.load(f)
 
         self.bot_config = BotConfig(config['bot'])
