@@ -1,0 +1,41 @@
+{
+    "bot": {
+        "token": "YOUR_BOT_TOKEN",
+        "prefix": "!",
+        "activity": [
+            "^_^",
+            "error!",
+            "(╯°□°）╯︵ ┻━┻",
+            "fixed",
+            "┳━┳ ノ( ゜-゜ノ)"
+        ],
+        "version": "1.0.0",
+        "debug": true
+    },
+    "database": {
+        "host": "localhost",
+        "user": "db_user",
+        "password": "db_password",
+        "database": "db_name"
+    },
+    "api": {
+        "key": "YOUR_API_KEY",
+        "url": "API_URL"
+    },
+    "intents": {
+        "all": true,
+        "members": true,
+        "presences": true,
+        "message_content": true
+    },
+    "authorized_users": [
+        {
+            "id": "USER_DISCORD_ID",
+            "name": "USER_NAME"
+        },
+        {
+            "id": "ANOTHER_USER_DISCORD_ID",
+            "name": "ANOTHER_USER_NAME"
+        }
+    ]
+}
