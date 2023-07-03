@@ -13,7 +13,7 @@ import functions
 class voice(commands.Cog):
 
     def __init__(self, bot):
-        self.database_path = bot.config_manager.database_config.path
+        self.database_path = bot.database_config.path
         self.bot = bot
 
     @commands.Cog.listener()

@@ -1,5 +1,6 @@
 import discord
 import asyncio
+import sqlite3
 import os
 import sys
 import traceback
@@ -21,14 +22,43 @@ class KtunAiLabBot(commands.Bot):
         self.config_manager = ConfigManager(config_json_path)
         self.bot_prefix = self.config_manager.bot_config.prefix
         self.bot_version = self.config_manager.bot_config.version
+        self.database_config = self.config_manager.database_config
         self.statues = cycle(self.config_manager.bot_config.activity)
         intents = discord.Intents.all()
         intents.members = self.config_manager.intents_config.members
         intents.presences = self.config_manager.intents_config.presences
         intents.message_content = self.config_manager.intents_config.message_content
         self.debug = self.config_manager.is_debug_mode()
-
+        self.control_db()
         super().__init__(command_prefix=self.bot_prefix, intents=intents)
+
+    def control_db(self):
+        db_path = self.database_config.path
+        if not os.path.exists(db_path):
+            print("Database not found. Creating database...")
+            conn = sqlite3.connect(db_path)
+
+            c = conn.cursor()
+
+            c.execute('''create table voiceChannel(userIDx INTEGER,
+                        voiceID INTEGER)''')
+
+            c.execute('''create table userSettings(userID INTEGER,
+                        channelName  TEXT,
+                        channelLimit INTEGER)''')
+
+            c.execute('''create table guildSettings
+                        (guildID INTEGER,
+                            channelName  TEXT,
+                            channelLimit INTEGER)''')
+
+            c.execute('''create table guild(guildID INTEGER,
+                        ownerID INTEGER,
+                        voiceChannelID  INTEGER,
+                        voiceCategoryID INTEGER)''')
+
+            conn.commit()
+            conn.close()
 
     async def start(self, **kwargs) -> None:
         if self.debug:
