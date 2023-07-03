@@ -79,6 +79,7 @@ celerybeat.pid
 .env
 .venv
 .json
+.db
 config.json
 env/
 venv/
