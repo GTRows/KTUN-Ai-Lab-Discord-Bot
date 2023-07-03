@@ -77,6 +77,7 @@ celerybeat.pid
 
 # Bot Configs
 config/
+config/.env
 
 # Environments
 .env
