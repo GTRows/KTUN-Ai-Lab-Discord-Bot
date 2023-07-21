@@ -83,8 +83,6 @@ class KtunAiLabBot(commands.Bot):
                     traceback.print_exc()
 
     async def close(self) -> None:
-        await self.logout()
-        await self.session.close()
         await super().close()
 
     async def restart(self) -> None:
@@ -100,7 +98,12 @@ class KtunAiLabBot(commands.Bot):
 
     @tasks.loop(seconds=60)  # Change status every minute
     async def change_status(self):
-        await self.change_presence(activity=discord.Game(next(self.statuses)))
+        try:
+            await self.change_presence(activity=discord.Game(next(self.statues)))
+        except Exception as e:
+            print(e)
+            self.change_status.cancel()
+            print("Status changing task cancelled")
 
     async def on_message(self, message: discord.Message) -> None:
         if message.author.bot:
